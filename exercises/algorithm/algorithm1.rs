@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -70,13 +70,47 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+	where
+        T: PartialOrd + Clone,
+    {
+        let mut merged_list = LinkedList::new();
+        
+        // 创建指向两个列表开头的指针
+        let mut a_ptr = list_a.start;
+        let mut b_ptr = list_b.start;
+
+        while let (Some(a), Some(b)) = (a_ptr, b_ptr) {
+            unsafe {
+                // 比较两个列表的当前节点的值
+                if (*a.as_ptr()).val <= (*b.as_ptr()).val {
+                    // 从 list_a 添加值并移动其指针
+                    merged_list.add((*a.as_ptr()).val.clone());
+                    a_ptr = (*a.as_ptr()).next;
+                } else {
+                    // 从 list_b 添加值并移动其指针
+                    merged_list.add((*b.as_ptr()).val.clone());
+                    b_ptr = (*b.as_ptr()).next;
+                }
+            }
         }
+
+        // 如果list_a中还有剩余节点，则将其添加到merged_list中
+        while let Some(a) = a_ptr {
+            unsafe {
+                merged_list.add((*a.as_ptr()).val.clone());
+                a_ptr = (*a.as_ptr()).next;
+            }
+        }
+
+        // 如果list_b中还有剩余节点，则将其添加到merged_list中
+        while let Some(b) = b_ptr {
+            unsafe {
+                merged_list.add((*b.as_ptr()).val.clone());
+                b_ptr = (*b.as_ptr()).next;
+            }
+        }
+
+        merged_list
 	}
 }
 

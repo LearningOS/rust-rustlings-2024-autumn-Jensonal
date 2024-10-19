@@ -3,7 +3,7 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
+
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -48,15 +48,26 @@ where
         BinarySearchTree { root: None }
     }
 
-    // Insert a value into the BST
+    // 在 BST 中添加某个值
     fn insert(&mut self, value: T) {
         //TODO
+        match self.root {
+            Some(ref mut node) => {
+                node.insert(value);
+            }
+            None => {
+                self.root = Some(Box::new(TreeNode::new(value)));
+            }
+        }
     }
 
-    // Search for a value in the BST
+    // 在 BST 中搜索某个值
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        match &self.root {
+            Some(node) => node.search(value),
+            None => false,
+        }
     }
 }
 
@@ -67,6 +78,44 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                if let Some(ref mut left) = self.left {
+                    left.insert(value);
+                } else {
+                    self.left = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+            Ordering::Greater => {
+                if let Some(ref mut right) = self.right {
+                    right.insert(value);
+                } else {
+                    self.right = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+            Ordering::Equal => {
+                // 如果值相等，什么也不做，因为二叉搜索树不允许重复值
+            }
+        }
+    }
+    fn search(&self, value: T) -> bool {
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                if let Some(ref left) = self.left {
+                    left.search(value)
+                } else {
+                    false
+                }
+            }
+            Ordering::Greater => {
+                if let Some(ref right) = self.right {
+                    right.search(value)
+                } else {
+                    false
+                }
+            }
+            Ordering::Equal => true,
+        }
     }
 }
 
